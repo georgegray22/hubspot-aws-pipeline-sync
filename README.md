@@ -1,8 +1,4 @@
 <p align="center">
-  <img src=".github/banner.svg" alt="AWS HubSpot Sync" width="100%">
-</p>
-
-<p align="center">
   <strong>Sync HubSpot CRM deals to AWS Partner Central (ACE) automatically.</strong><br>
   Built for AWS Partner Network members who use HubSpot as their CRM.
 </p>
