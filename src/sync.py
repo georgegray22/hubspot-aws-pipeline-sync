@@ -22,7 +22,6 @@ from .config import (
     DEFAULT_CLOSED_LOST_REASON,
     HS_ACE_LAST_SYNC,
     HS_ACE_OPPORTUNITY_ID,
-    HS_ACE_PROJECT_DESCRIPTION,
     HS_ACE_SYNC_ERROR,
     HS_ACE_SYNC_STATUS,
     HS_DEALNAME,
@@ -32,7 +31,6 @@ from .config import (
     PIPELINE_ID,
     SKIP_STAGES,
     STAGE_DISPLAY_NAME,
-    STAGE_TO_ACE,
     STAGE_TO_NEXT_STEPS,
     SYNC_ELIGIBLE_STAGES,
     ACEConfig,
@@ -261,8 +259,7 @@ def fetch_contacts_for_deal(hubspot: HubSpotClient, deal_id: int) -> list[dict[s
             if not contact_id:
                 continue
             contact = hubspot.get(
-                f"/crm/v3/objects/contacts/{contact_id}"
-                "?properties=firstname,lastname,email,jobtitle,phone"
+                f"/crm/v3/objects/contacts/{contact_id}" "?properties=firstname,lastname,email,jobtitle,phone"
             )
             props = contact.get("properties", {})
             contacts.append(props)
@@ -802,10 +799,15 @@ def _send_slack_summary(result: SyncResult, config: ACEConfig) -> None:
         counts.append(f"*{len(result.errors)}* failed")
 
     separator = "  \u2022  "
-    blocks.append({
-        "type": "section",
-        "text": {"type": "mrkdwn", "text": f"{status_icon}  *ACE Pipeline Sync*{dry_label}\n{separator.join(counts)}"},
-    })
+    blocks.append(
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"{status_icon}  *ACE Pipeline Sync*{dry_label}\n{separator.join(counts)}",
+            },
+        }
+    )
 
     if result.created:
         lines = []
@@ -828,10 +830,17 @@ def _send_slack_summary(result: SyncResult, config: ACEConfig) -> None:
         blocks.append({"type": "section", "text": {"type": "mrkdwn", "text": "\n".join(lines)}})
 
     timestamp = datetime.now(timezone.utc).strftime("%b %-d, %H:%M UTC")
-    blocks.append({
-        "type": "context",
-        "elements": [{"type": "mrkdwn", "text": f"{config.catalog} catalog  \u00b7  {result.total} deals  \u00b7  {timestamp}"}],
-    })
+    blocks.append(
+        {
+            "type": "context",
+            "elements": [
+                {
+                    "type": "mrkdwn",
+                    "text": f"{config.catalog} catalog  \u00b7  {result.total} deals  \u00b7  {timestamp}",
+                }
+            ],
+        }
+    )
 
     fallback = f"ACE Sync: {result.summary()}"
     try:

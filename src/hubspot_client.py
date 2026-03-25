@@ -121,10 +121,12 @@ class HubSpotClient:
                 response.raise_for_status()
                 return response.json()
 
-            except HTTPError as e:
+            except HTTPError:
                 if response.status_code == 429:
                     # Rate limited — apply exponential backoff
-                    logger.warning(f"Hit rate limit (429) on {method.upper()} {endpoint}, backing off {backoff_seconds}s")
+                    logger.warning(
+                        f"Hit rate limit (429) on {method.upper()} {endpoint}, backing off {backoff_seconds}s"
+                    )
                     self._backoff_until = time.time() + backoff_seconds
                     backoff_seconds = min(backoff_seconds * 2, 30.0)  # Cap at 30s
                     time.sleep(self._backoff_until - time.time())

@@ -1,9 +1,6 @@
 """Tests for the mapping module."""
 
-import pytest
-
 from src.mapping import (
-    ValidationError,
     build_create_payload,
     build_customer_contacts,
     build_opportunity_team,

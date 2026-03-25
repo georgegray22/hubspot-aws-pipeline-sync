@@ -1,11 +1,10 @@
 """Tests for the ACE client (boto3 wrapper)."""
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
 from src.ace_client import ACEClient
-from src.config import ACEConfig
 
 
 @pytest.fixture
@@ -28,7 +27,7 @@ class TestCreateOpportunity:
         """Create opportunity should pass correct parameters to boto3."""
         mock_boto3_client.create_opportunity.return_value = {"Id": "opp-12345"}
 
-        result = ace_client.create_opportunity(
+        ace_client.create_opportunity(
             client_token="token-123",
             customer={"Account": {"CompanyName": "Acme Corp"}},
             project={"Title": "Test Project"},
@@ -152,7 +151,6 @@ class TestWriteDelay:
 
         import time
 
-        start = time.monotonic()
         ace_client.create_opportunity(
             client_token="token-1",
             customer={"Account": {"CompanyName": "Acme Corp"}},
@@ -180,7 +178,6 @@ class TestWriteDelay:
 
         import time
 
-        start = time.monotonic()
         ace_client.update_opportunity(
             opportunity_id="opp-1",
             last_modified_date="2026-03-23T10:00:00Z",
@@ -245,9 +242,7 @@ class TestConnectionTest:
 
     def test_connection_test_success(self, ace_client, mock_boto3_client):
         """test_connection should return True on success."""
-        mock_boto3_client.list_solutions.return_value = {
-            "SolutionSummaries": [{"Id": "sol-123"}]
-        }
+        mock_boto3_client.list_solutions.return_value = {"SolutionSummaries": [{"Id": "sol-123"}]}
 
         result = ace_client.test_connection()
 
@@ -274,7 +269,7 @@ class TestAssociateOpportunity:
         """associate_opportunity should use provided solution_id."""
         mock_boto3_client.associate_opportunity.return_value = {"Id": "assoc-123"}
 
-        result = ace_client.associate_opportunity("opp-12345", solution_id="sol-999")
+        ace_client.associate_opportunity("opp-12345", solution_id="sol-999")
 
         call_kwargs = mock_boto3_client.associate_opportunity.call_args.kwargs
         assert call_kwargs["OpportunityIdentifier"] == "opp-12345"
@@ -284,7 +279,7 @@ class TestAssociateOpportunity:
         """associate_opportunity should default to config solution_id."""
         mock_boto3_client.associate_opportunity.return_value = {"Id": "assoc-123"}
 
-        result = ace_client.associate_opportunity("opp-12345")
+        ace_client.associate_opportunity("opp-12345")
 
         call_kwargs = mock_boto3_client.associate_opportunity.call_args.kwargs
         # Should use the one from ACEConfig (sol-12345)
@@ -296,11 +291,9 @@ class TestStartEngagement:
 
     def test_start_engagement(self, ace_client, mock_boto3_client):
         """start_engagement should submit opportunity for AWS review."""
-        mock_boto3_client.start_engagement_from_opportunity_task.return_value = {
-            "Id": "eng-123"
-        }
+        mock_boto3_client.start_engagement_from_opportunity_task.return_value = {"Id": "eng-123"}
 
-        result = ace_client.start_engagement("opp-12345")
+        ace_client.start_engagement("opp-12345")
 
         assert mock_boto3_client.start_engagement_from_opportunity_task.called
         call_kwargs = mock_boto3_client.start_engagement_from_opportunity_task.call_args.kwargs

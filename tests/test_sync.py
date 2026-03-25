@@ -1,27 +1,19 @@
 """Comprehensive tests for the sync module — all critical paths covered."""
 
-import json
-import sys
-from datetime import datetime, timezone
-from pathlib import Path
-from unittest import mock
-from unittest.mock import MagicMock, Mock, call, patch
+from unittest.mock import Mock, patch
 
 import pytest
 from botocore.exceptions import ClientError
 
 # Imports via conftest sys.path setup (src is now importable as src.module)
 from src.config import (
-    ACE_STATUS_NOT_SYNCED,
-    ACE_STATUS_PENDING_REVIEW,
-    ACE_STATUS_SYNCED,
-    ACE_STATUS_SYNC_ERROR,
     ACEConfig,
 )
 from src.mapping import ValidationError
 from src.sync import (
     SyncResult,
     _deal_link,
+    _reverse_sync_aws_contacts,
     fetch_company_for_deal,
     fetch_eligible_deals,
     fetch_withdrawn_deals,
@@ -30,10 +22,7 @@ from src.sync import (
     sync_deal_update,
     validate_deals,
     withdraw_opportunity,
-    _reverse_sync_aws_contacts,
 )
-
-
 
 # =============================================================================
 # SyncResult Tests
@@ -487,7 +476,7 @@ class TestFetchCompanyForDeal:
 
         mock_hubspot.get_company.return_value = mock_company
 
-        result = fetch_company_for_deal(mock_hubspot, 1234)
+        fetch_company_for_deal(mock_hubspot, 1234)
 
         # Should request first company only
         mock_hubspot.get_company.assert_called_once()
@@ -860,7 +849,7 @@ class TestSyncDealUpdate:
 
         with patch("src.sync.map_ace_stage", return_value="Technical Validation"):
             with patch("src.sync.build_update_payload", return_value=update_payload):
-                outcome = sync_deal_update(deal_data, mock_hubspot, mock_ace, dry_run=False)
+                sync_deal_update(deal_data, mock_hubspot, mock_ace, dry_run=False)
 
         # Verify update was called
         mock_ace.update_opportunity.assert_called_once()
@@ -1050,9 +1039,7 @@ class TestRunSync:
                                 deal = {"id": "1", "properties": {"ace_opportunity_id": None}}
                                 mock_fetch.return_value = [deal]
 
-                                error = ClientError(
-                                    {"Error": {"Code": "ConflictException"}}, "CreateOpportunity"
-                                )
+                                error = ClientError({"Error": {"Code": "ConflictException"}}, "CreateOpportunity")
                                 mock_create.side_effect = error
 
                                 result = run_sync(config)

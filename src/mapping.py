@@ -13,7 +13,6 @@ from .config import (
     DEFAULT_AWS_INDUSTRY,
     DEFAULT_CLOSED_LOST_REASON,
     DEFAULT_OPPORTUNITY_TYPE,
-    HS_ACE_OPPORTUNITY_ID,
     HS_ACE_PROJECT_DESCRIPTION,
     HS_AMOUNT,
     HS_CITY,
@@ -21,7 +20,6 @@ from .config import (
     HS_CONTRACT_TERM,
     HS_COUNTRY_CODE,
     HS_DEALNAME,
-    HS_DEALSTAGE,
     HS_DEALTYPE,
     HS_DESCRIPTION,
     HS_DOMAIN,
@@ -331,8 +329,7 @@ def build_update_payload(
     if new_ace_stage != current_ace_stage:
         if is_stage_regression(current_ace_stage, new_ace_stage):
             logger.warning(
-                f"Stage regression blocked: {current_ace_stage} → {new_ace_stage}. "
-                "Updating non-stage fields only."
+                f"Stage regression blocked: {current_ace_stage} → {new_ace_stage}. " "Updating non-stage fields only."
             )
         else:
             effective_stage = new_ace_stage

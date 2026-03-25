@@ -144,9 +144,7 @@ class ACEClient:
             RelatedEntityType="Solutions",
             RelatedEntityIdentifier=solution_id or self.config.solution_id,
         )
-        logger.info(
-            f"Associated opportunity {opportunity_id} with solution {solution_id or self.config.solution_id}"
-        )
+        logger.info(f"Associated opportunity {opportunity_id} with solution {solution_id or self.config.solution_id}")
         return response
 
     def start_engagement(self, opportunity_id: str) -> dict[str, Any]:

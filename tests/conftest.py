@@ -1,7 +1,7 @@
 """Test fixtures for AWS HubSpot Sync project."""
 
-import sys
 import os
+import sys
 from pathlib import Path
 
 import pytest

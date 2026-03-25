@@ -9,9 +9,9 @@ from dotenv import load_dotenv
 # Load environment variables from .env file at project root
 load_dotenv(Path(__file__).parent.parent / ".env")
 
-import typer
+import typer  # noqa: E402
 
-from .logger import get_logger, print_status
+from .logger import get_logger, print_status  # noqa: E402
 
 logger = get_logger("ACESync")
 app = typer.Typer(help="AWS Partner Central (ACE) Pipeline Sync")
