@@ -1,3 +1,5 @@
+# HubSpot → AWS Pipeline Sync
+
 <p align="center">
   <strong>Sync HubSpot CRM deals to AWS Partner Central (ACE) automatically.</strong><br>
   Built for AWS Partner Network members who use HubSpot as their CRM.
@@ -9,6 +11,54 @@
   <a href="#running-on-a-schedule"><img src="https://img.shields.io/badge/schedule-GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white" alt="GitHub Actions"></a>
   <a href="#slack-notifications-optional"><img src="https://img.shields.io/badge/notifications-Slack-4A154B?style=flat-square&logo=slack&logoColor=white" alt="Slack"></a>
 </p>
+
+---
+
+## Get Started in 3 Steps
+
+```bash
+# 1. Clone and install
+git clone https://github.com/georgegray22/hubspot-aws-pipeline-sync.git
+cd hubspot-aws-pipeline-sync
+pip install -e ".[dev]"
+
+# 2. Set up your config (pick one)
+```
+
+### Option A: Let Claude Code walk you through it (Recommended)
+
+If you have [Claude Code](https://claude.ai/code) installed, paste this prompt in the project directory:
+
+> **Help me set up this project. Read the CLAUDE.md setup guide, .env.example, and README, then walk me through configuring everything step by step.**
+
+Claude will ask you for each credential one at a time, help you map your HubSpot stages to ACE stages, and write your `.env` file automatically.
+
+### Option B: Manual setup
+
+```bash
+cp .env.example .env
+# Edit .env with your credentials and stage mappings
+# See the Configuration Guide below for details
+```
+
+### 3. Run
+
+```bash
+python -m src.main test-connection   # Verify AWS credentials
+python -m src.main sync --dry-run    # Preview (no writes)
+python -m src.main sync --catalog AWS # Sync for real
+```
+
+---
+
+## What You'll Need
+
+Before you start, make sure you have:
+
+- **Python 3.11+**
+- **AWS Partner Network membership** with [ACE API access](https://aws.amazon.com/partners/)
+- **HubSpot account** with admin access (to create a Private App + custom properties)
+- **AWS IAM credentials** with `partnercentral-selling` permissions ([setup guide below](#1-aws-iam-setup))
 
 ---
 
@@ -48,60 +98,6 @@ graph LR
  3. EXISTING deals (has ACE ID) → Detect changes → Update stage/amount/close date
  4. OPTED-OUT deals (unchecked) → Close ACE opportunity → Clear sync fields
  5. Reverse sync → Pull AWS Account Manager, Sales Rep, PSM, PDM into HubSpot
-```
-
-## Quick Start
-
-### Prerequisites
-
-- **Python 3.11+**
-- [AWS Partner Network membership](https://aws.amazon.com/partners/) with ACE API access
-- HubSpot account with API access (private app)
-- AWS IAM credentials with `partnercentral-selling` permissions
-
-### Installation
-
-```bash
-git clone https://github.com/georgegray22/hubspot-aws-pipeline-sync.git
-cd hubspot-aws-pipeline-sync
-pip install -e ".[dev]"
-```
-
-### Configuration
-
-#### Option A: Guided Setup with Claude Code (Recommended)
-
-If you have [Claude Code](https://claude.ai/code) installed, run this in the project directory:
-
-```
-Help me set up this project. Read the CLAUDE.md setup guide, .env.example, and README, then walk me through configuring everything step by step.
-```
-
-Claude will read the docs, ask you for each credential and setting one at a time, help you map your HubSpot stages to ACE stages, and write your `.env` file.
-
-#### Option B: Manual Setup
-
-```bash
-cp .env.example .env
-# Edit .env with your credentials and stage mappings
-```
-
-> :point_right: See the [Configuration Guide](#configuration-guide) below for detailed setup instructions.
-
-### Run
-
-```bash
-# Test your AWS connection first
-python -m src.main test-connection
-
-# Preview what would sync (safe — no writes)
-python -m src.main sync --dry-run
-
-# Run the actual sync against production
-python -m src.main sync --catalog AWS
-
-# Validate which deals are ready for sync
-python -m src.main validate
 ```
 
 If anything is misconfigured, you'll get clear error messages telling you exactly what to fix:
