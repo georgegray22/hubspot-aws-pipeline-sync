@@ -84,46 +84,58 @@ Ask the user to confirm they have:
 - [ ] A HubSpot account with admin access (to create a Private App and custom properties)
 - [ ] (Optional) A Slack workspace if they want notifications
 
-### Step 1: AWS Credentials
+### Step 1: Collect Credentials
+Gather all credentials first, then write the `.env` file so that automated commands work in later steps.
+
+#### 1a: AWS Credentials
 Read the "AWS IAM Setup" section in `README.md` for the IAM policy. Walk the user through:
 - [ ] Creating an IAM user with the `partnercentral-selling` permissions (show them the policy from the README)
 - [ ] Getting the Access Key ID and Secret Access Key
 - [ ] Ask them to provide: `AWS_ACE_ACCESS_KEY_ID` and `AWS_ACE_SECRET_ACCESS_KEY`
 
-### Step 2: ACE Solution ID
+#### 1b: ACE Solution ID
 - [ ] Tell the user: go to AWS Partner Central → Solutions → copy the Solution ID
 - [ ] Ask them to provide: `ACE_SOLUTION_ID`
 
-### Step 3: HubSpot Private App
+#### 1c: HubSpot Private App
 Read the "HubSpot Setup" section in `README.md`. Walk the user through:
 - [ ] Creating a Private App in HubSpot Settings → Integrations → Private Apps
-- [ ] Required scopes: `crm.objects.deals.read`, `crm.objects.deals.write`, `crm.objects.companies.read`, `crm.objects.contacts.read`, `crm.schemas.deals.read`
+- [ ] Required scopes (all of these are needed):
+  - `crm.objects.deals.read` — read deals for sync
+  - `crm.objects.deals.write` — write ACE IDs and sync status back to deals
+  - `crm.objects.companies.read` — read company data for ACE payloads
+  - `crm.objects.contacts.read` — read contact data for ACE payloads
+  - `crm.schemas.deals.read` — read pipeline/stage definitions (used by `list-stages` command)
+  - `crm.schemas.deals.write` — create custom deal properties (used by `setup-hubspot` command)
 - [ ] Ask them to provide: `HUBSPOT_API_KEY` (the access token)
 - [ ] Ask them to provide: `HUBSPOT_PORTAL_ID` (found in Settings → Account Information)
 
-### Step 4: HubSpot Custom Properties
-Read the custom properties table in `README.md`. Tell the user they need to create these custom Deal properties in HubSpot and list them out. Key ones:
-- `submit_to_aws` (Checkbox) — this is the trigger field
-- `ace_opportunity_id` (Text) — stores the ACE ID after sync
-- `ace_sync_status` (Dropdown) — tracks sync state
-- `ace_project_description` (Multi-line text) — required by ACE for deal description
+### Step 2: Write the Initial .env File
+Write the `.env` file now with the credentials collected in Step 1. This is needed before running any CLI commands against HubSpot or AWS.
+- [ ] Read `.env.example` for the template
+- [ ] Create `.env` with the credentials filled in (stage mapping can use placeholders for now)
+- [ ] Double-check nothing is missing by reading `src/config.py` and checking what `validate_config()` requires
 
-If their HubSpot uses different internal names, note they can override via `HS_*` env vars.
+**Important**: Never show or echo back credentials. Write the values directly into `.env` without displaying them in chat. Remind the user that `.env` is gitignored and should never be committed.
 
-### Step 5: Stage Mapping (Most Important)
+### Step 3: HubSpot Custom Properties
+Now that `.env` exists with the HubSpot token, tell the user to run the automated setup command:
+```bash
+python -m src.main setup-hubspot
+```
+This creates all 12 required custom deal properties in a dedicated "AWS Partner Fields" group in HubSpot. Properties that already exist are safely skipped.
+
+If their HubSpot uses different internal names for any of these properties, note they can override via `HS_*` env vars.
+
+### Step 4: Stage Mapping (Most Important)
 This is the hardest part. Read `src/config.py` to understand how `STAGE_MAPPING` works. Guide the user:
-- [ ] Tell them to find their HubSpot stage IDs: Settings → Deals → Pipelines, or via API: `GET /crm/v3/pipelines/deals/{pipelineId}/stages`
+- [ ] Tell them to run `python -m src.main list-stages` to fetch their pipeline stages directly from HubSpot (no manual lookup needed)
 - [ ] Explain the valid ACE stages: Qualified → Technical Validation → Business Validation → Committed → Launched → Closed Lost
 - [ ] Ask them to map each of their HubSpot stages to an ACE stage
 - [ ] Build the `STAGE_MAPPING`, `STAGE_DISPLAY_NAMES`, `SYNC_ELIGIBLE_STAGES`, and `SKIP_STAGES` values for them based on what they provide
+- [ ] Update the `.env` file with the completed stage mapping values
 
-### Step 6: Write the .env File
-Once you have all the values:
-- [ ] Read `.env.example` for the template
-- [ ] Create `.env` with all their values filled in
-- [ ] Double-check nothing is missing by reading `src/config.py` and checking what `validate_config()` requires
-
-### Step 7: Test
+### Step 5: Test
 Run these commands in order and explain the output:
 ```bash
 pip install -e ".[dev]"
@@ -132,18 +144,16 @@ python -m src.main validate               # Check which deals are ready
 python -m src.main sync --dry-run         # Preview without writing
 ```
 
-### Step 8: Slack (Optional)
+### Step 6: Slack (Optional)
 If the user wants Slack notifications:
 - [ ] Guide them to create a Slack app with `chat:write` scope
 - [ ] Ask for: `SLACK_BOT_TOKEN` and `ACE_SLACK_CHANNEL`
 - [ ] Add to `.env`
 
-### Step 9: Schedule (Optional)
+### Step 7: Schedule (Optional)
 Ask if they want to run on a schedule. Options:
 - **GitHub Actions**: The included `.github/workflows/sync.yml` runs every 30 min during business hours. They need to add secrets to the repo (list which ones from the README).
 - **Cron**: Give them the cron line from the README.
-
-**Important**: Never show or echo back credentials. When writing the `.env` file, write the values directly without displaying them in chat. Remind the user that `.env` is gitignored and should never be committed.
 
 ## Common Tasks
 

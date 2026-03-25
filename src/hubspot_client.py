@@ -147,6 +147,20 @@ class HubSpotClient:
         return self._make_request("patch", endpoint, json=json_data)
 
     # =========================================================================
+    # Pipeline & Stage Discovery
+    # =========================================================================
+
+    def get_deal_pipelines(self) -> list[dict[str, Any]]:
+        """Fetch all deal pipelines with their stages."""
+        data = self.get("/crm/v3/pipelines/deals")
+        return data.get("results", [])
+
+    def get_pipeline_stages(self, pipeline_id: str) -> list[dict[str, Any]]:
+        """Fetch stages for a specific deal pipeline."""
+        data = self.get(f"/crm/v3/pipelines/deals/{pipeline_id}/stages")
+        return data.get("results", [])
+
+    # =========================================================================
     # Deal Operations
     # =========================================================================
 
@@ -196,6 +210,28 @@ class HubSpotClient:
             domain=props.get("domain", ""),
             custom_properties=props,
         )
+
+    # =========================================================================
+    # Property Management
+    # =========================================================================
+
+    def create_deal_property_group(self, group_def: dict[str, Any]) -> dict[str, Any] | None:
+        """Create a custom deal property group. Returns None if it already exists."""
+        try:
+            return self.post("/crm/v3/properties/deals/groups", json_data=group_def)
+        except HTTPError as e:
+            if e.response.status_code == 409:
+                return None  # Already exists
+            raise
+
+    def create_deal_property(self, property_def: dict[str, Any]) -> dict[str, Any] | None:
+        """Create a custom deal property. Returns None if it already exists."""
+        try:
+            return self.post("/crm/v3/properties/deals", json_data=property_def)
+        except HTTPError as e:
+            if e.response.status_code == 409:
+                return None  # Already exists
+            raise
 
     # =========================================================================
     # Slack-style message helper (for send_message_with_ts)

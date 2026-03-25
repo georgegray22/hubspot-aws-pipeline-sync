@@ -153,11 +153,12 @@ Set `AWS_ACE_ACCESS_KEY_ID` and `AWS_ACE_SECRET_ACCESS_KEY` in your `.env`.
 
 1. Go to **Settings → Integrations → Private Apps**
 2. Create a new app with these scopes:
-   - `crm.objects.deals.read`
-   - `crm.objects.deals.write`
-   - `crm.objects.companies.read`
-   - `crm.objects.contacts.read`
-   - `crm.schemas.deals.read`
+   - `crm.objects.deals.read` — read deals for sync
+   - `crm.objects.deals.write` — write ACE IDs and sync status back to deals
+   - `crm.objects.companies.read` — read company data for ACE payloads
+   - `crm.objects.contacts.read` — read contact data for ACE payloads
+   - `crm.schemas.deals.read` — read pipeline/stage definitions (`list-stages` command)
+   - `crm.schemas.deals.write` — create custom deal properties (`setup-hubspot` command)
 3. Copy the access token to `HUBSPOT_API_KEY`
 
 #### Create Custom Deal Properties
