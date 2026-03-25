@@ -46,10 +46,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/your-org/aws-hubspot-sync"
-Documentation = "https://github.com/your-org/aws-hubspot-sync/wiki"
-Repository = "https://github.com/your-org/aws-hubspot-sync.git"
-Issues = "https://github.com/your-org/aws-hubspot-sync/issues"
+Homepage = "https://github.com/georgegray22/hubspot-aws-pipeline-sync"
+Documentation = "https://github.com/georgegray22/hubspot-aws-pipeline-sync/wiki"
+Repository = "https://github.com/georgegray22/hubspot-aws-pipeline-sync.git"
+Issues = "https://github.com/georgegray22/hubspot-aws-pipeline-sync/issues"
 
 [tool.black]
 line-length = 120
