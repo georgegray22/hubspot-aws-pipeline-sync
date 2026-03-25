@@ -62,12 +62,24 @@ graph LR
 ### Installation
 
 ```bash
-git clone https://github.com/YOUR_ORG/aws-hubspot-sync.git
-cd aws-hubspot-sync
+git clone https://github.com/georgegray22/hubspot-aws-pipeline-sync.git
+cd hubspot-aws-pipeline-sync
 pip install -e ".[dev]"
 ```
 
 ### Configuration
+
+#### Option A: Guided Setup with Claude Code (Recommended)
+
+If you have [Claude Code](https://claude.ai/code) installed, run this in the project directory:
+
+```
+Help me set up this project. Read the CLAUDE.md setup guide, .env.example, and README, then walk me through configuring everything step by step.
+```
+
+Claude will read the docs, ask you for each credential and setting one at a time, help you map your HubSpot stages to ACE stages, and write your `.env` file.
+
+#### Option B: Manual Setup
 
 ```bash
 cp .env.example .env

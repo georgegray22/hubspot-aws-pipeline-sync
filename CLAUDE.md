@@ -73,6 +73,78 @@ Everything is configured via environment variables (loaded from `.env`). Key cat
 - **Slack** (optional): `SLACK_BOT_TOKEN`, `ACE_SLACK_CHANNEL`
 - **Field name overrides**: `HS_SUBMIT_FIELD`, `HS_ACE_OPP_ID_FIELD`, etc.
 
+## Interactive Setup Guide
+
+When a user asks you to help them set up this project (e.g. "help me set up" or "guide me through setup"), follow this checklist. Read the relevant files first, then walk the user through each step interactively. Ask for one piece of information at a time — don't dump everything at once.
+
+### Step 0: Prerequisites Check
+Ask the user to confirm they have:
+- [ ] Python 3.11+ installed
+- [ ] AWS Partner Network membership with ACE API access enabled
+- [ ] A HubSpot account with admin access (to create a Private App and custom properties)
+- [ ] (Optional) A Slack workspace if they want notifications
+
+### Step 1: AWS Credentials
+Read the "AWS IAM Setup" section in `README.md` for the IAM policy. Walk the user through:
+- [ ] Creating an IAM user with the `partnercentral-selling` permissions (show them the policy from the README)
+- [ ] Getting the Access Key ID and Secret Access Key
+- [ ] Ask them to provide: `AWS_ACE_ACCESS_KEY_ID` and `AWS_ACE_SECRET_ACCESS_KEY`
+
+### Step 2: ACE Solution ID
+- [ ] Tell the user: go to AWS Partner Central → Solutions → copy the Solution ID
+- [ ] Ask them to provide: `ACE_SOLUTION_ID`
+
+### Step 3: HubSpot Private App
+Read the "HubSpot Setup" section in `README.md`. Walk the user through:
+- [ ] Creating a Private App in HubSpot Settings → Integrations → Private Apps
+- [ ] Required scopes: `crm.objects.deals.read`, `crm.objects.deals.write`, `crm.objects.companies.read`, `crm.objects.contacts.read`, `crm.schemas.deals.read`
+- [ ] Ask them to provide: `HUBSPOT_API_KEY` (the access token)
+- [ ] Ask them to provide: `HUBSPOT_PORTAL_ID` (found in Settings → Account Information)
+
+### Step 4: HubSpot Custom Properties
+Read the custom properties table in `README.md`. Tell the user they need to create these custom Deal properties in HubSpot and list them out. Key ones:
+- `submit_to_aws` (Checkbox) — this is the trigger field
+- `ace_opportunity_id` (Text) — stores the ACE ID after sync
+- `ace_sync_status` (Dropdown) — tracks sync state
+- `ace_project_description` (Multi-line text) — required by ACE for deal description
+
+If their HubSpot uses different internal names, note they can override via `HS_*` env vars.
+
+### Step 5: Stage Mapping (Most Important)
+This is the hardest part. Read `src/config.py` to understand how `STAGE_MAPPING` works. Guide the user:
+- [ ] Tell them to find their HubSpot stage IDs: Settings → Deals → Pipelines, or via API: `GET /crm/v3/pipelines/deals/{pipelineId}/stages`
+- [ ] Explain the valid ACE stages: Qualified → Technical Validation → Business Validation → Committed → Launched → Closed Lost
+- [ ] Ask them to map each of their HubSpot stages to an ACE stage
+- [ ] Build the `STAGE_MAPPING`, `STAGE_DISPLAY_NAMES`, `SYNC_ELIGIBLE_STAGES`, and `SKIP_STAGES` values for them based on what they provide
+
+### Step 6: Write the .env File
+Once you have all the values:
+- [ ] Read `.env.example` for the template
+- [ ] Create `.env` with all their values filled in
+- [ ] Double-check nothing is missing by reading `src/config.py` and checking what `validate_config()` requires
+
+### Step 7: Test
+Run these commands in order and explain the output:
+```bash
+pip install -e ".[dev]"
+python -m src.main test-connection        # Verify AWS credentials work
+python -m src.main validate               # Check which deals are ready
+python -m src.main sync --dry-run         # Preview without writing
+```
+
+### Step 8: Slack (Optional)
+If the user wants Slack notifications:
+- [ ] Guide them to create a Slack app with `chat:write` scope
+- [ ] Ask for: `SLACK_BOT_TOKEN` and `ACE_SLACK_CHANNEL`
+- [ ] Add to `.env`
+
+### Step 9: Schedule (Optional)
+Ask if they want to run on a schedule. Options:
+- **GitHub Actions**: The included `.github/workflows/sync.yml` runs every 30 min during business hours. They need to add secrets to the repo (list which ones from the README).
+- **Cron**: Give them the cron line from the README.
+
+**Important**: Never show or echo back credentials. When writing the `.env` file, write the values directly without displaying them in chat. Remind the user that `.env` is gitignored and should never be committed.
+
 ## Common Tasks
 
 ### Adding a new HubSpot field to the sync
