@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0f1419"/>
+      <stop offset="50%" stop-color="#161b22"/>
+      <stop offset="100%" stop-color="#0f1419"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="400" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF9900"/>
+      <stop offset="100%" stop-color="#FF6600"/>
+    </linearGradient>
+    <linearGradient id="hubspot" x1="0" y1="0" x2="400" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF7A59"/>
+      <stop offset="100%" stop-color="#FF5C35"/>
+    </linearGradient>
+    <linearGradient id="arrow" x1="0" y1="0" x2="100" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF7A59"/>
+      <stop offset="100%" stop-color="#FF9900"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softglow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="300" fill="url(#bg)"/>
+
+  <!-- Subtle grid pattern -->
+  <g opacity="0.04">
+    <line x1="0" y1="0" x2="0" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="60" y1="0" x2="60" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="120" y1="0" x2="120" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="180" y1="0" x2="180" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="240" y1="0" x2="240" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="300" y1="0" x2="300" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="360" y1="0" x2="360" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="420" y1="0" x2="420" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="480" y1="0" x2="480" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="540" y1="0" x2="540" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="600" y1="0" x2="600" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="660" y1="0" x2="660" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="720" y1="0" x2="720" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="780" y1="0" x2="780" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="840" y1="0" x2="840" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="900" y1="0" x2="900" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="960" y1="0" x2="960" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="1020" y1="0" x2="1020" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="1080" y1="0" x2="1080" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="1140" y1="0" x2="1140" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="1200" y1="0" x2="1200" y2="300" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="60" x2="1200" y2="60" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="120" x2="1200" y2="120" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="180" x2="1200" y2="180" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="240" x2="1200" y2="240" stroke="white" stroke-width="1"/>
+  </g>
+
+  <!-- Decorative circles -->
+  <circle cx="150" cy="150" r="120" stroke="#FF9900" stroke-width="0.5" fill="none" opacity="0.08"/>
+  <circle cx="150" cy="150" r="80" stroke="#FF9900" stroke-width="0.5" fill="none" opacity="0.05"/>
+  <circle cx="1050" cy="150" r="120" stroke="#FF7A59" stroke-width="0.5" fill="none" opacity="0.08"/>
+  <circle cx="1050" cy="150" r="80" stroke="#FF7A59" stroke-width="0.5" fill="none" opacity="0.05"/>
+
+  <!-- HubSpot icon (left) -->
+  <g transform="translate(100, 105)" filter="url(#softglow)">
+    <circle cx="50" cy="45" r="38" stroke="#FF7A59" stroke-width="2" fill="none" opacity="0.9"/>
+    <circle cx="50" cy="30" r="8" fill="#FF7A59" opacity="0.9"/>
+    <circle cx="32" cy="55" r="6" fill="#FF7A59" opacity="0.9"/>
+    <circle cx="68" cy="55" r="6" fill="#FF7A59" opacity="0.9"/>
+    <line x1="50" y1="38" x2="50" y2="50" stroke="#FF7A59" stroke-width="2.5" opacity="0.9"/>
+    <line x1="50" y1="50" x2="36" y2="53" stroke="#FF7A59" stroke-width="2" opacity="0.9"/>
+    <line x1="50" y1="50" x2="64" y2="53" stroke="#FF7A59" stroke-width="2" opacity="0.9"/>
+  </g>
+
+  <!-- Animated-style arrow -->
+  <g filter="url(#glow)">
+    <line x1="220" y1="150" x2="340" y2="150" stroke="url(#arrow)" stroke-width="2" stroke-dasharray="8,6" opacity="0.6"/>
+    <polygon points="340,143 355,150 340,157" fill="url(#arrow)" opacity="0.7"/>
+
+    <line x1="845" y1="150" x2="965" y2="150" stroke="url(#arrow)" stroke-width="2" stroke-dasharray="8,6" opacity="0.6"/>
+    <polygon points="965,143 980,150 965,157" fill="url(#arrow)" opacity="0.7"/>
+  </g>
+
+  <!-- Center content box -->
+  <rect x="370" y="65" width="460" height="170" rx="12" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+
+  <!-- Sync icon -->
+  <g transform="translate(575, 95)" filter="url(#glow)">
+    <path d="M25 0 A25 25 0 0 1 25 50" stroke="#58a6ff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M25 50 A25 25 0 0 1 25 0" stroke="#FF9900" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <polygon points="45,8 50,0 40,0" fill="#58a6ff"/>
+    <polygon points="5,42 0,50 10,50" fill="#FF9900"/>
+  </g>
+
+  <!-- Main title -->
+  <text x="600" y="175" text-anchor="middle" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="28" font-weight="700" fill="#e6edf3" letter-spacing="0.5">AWS HubSpot Sync</text>
+
+  <!-- Subtitle -->
+  <text x="600" y="210" text-anchor="middle" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="14" fill="#8b949e" letter-spacing="0.5">Sync HubSpot CRM deals to AWS Partner Central</text>
+
+  <!-- AWS icon (right) -->
+  <g transform="translate(1000, 110)" filter="url(#softglow)">
+    <path d="M50 15 C30 15 15 30 15 50 L15 55 C15 60 20 65 25 65 L75 65 C80 65 85 60 85 55 L85 50 C85 30 70 15 50 15Z" stroke="#FF9900" stroke-width="2" fill="none" opacity="0.9"/>
+    <path d="M30 45 L50 25 L70 45" stroke="#FF9900" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+    <line x1="50" y1="25" x2="50" y2="58" stroke="#FF9900" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+  </g>
+
+  <!-- Bottom accent line -->
+  <rect x="0" y="296" width="1200" height="4" fill="url(#accent)" opacity="0.8"/>
+</svg>

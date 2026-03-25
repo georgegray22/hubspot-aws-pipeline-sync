@@ -1,0 +1,80 @@
+name: HubSpot to AWS Partner Central Sync
+
+on:
+  schedule:
+    # Every 30 minutes, 8 AM to 8 PM UTC on weekdays (Monday-Friday)
+    - cron: '*/30 8-20 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      catalog:
+        description: 'ACE Catalog (Sandbox or AWS)'
+        required: true
+        default: 'Sandbox'
+        type: choice
+        options:
+          - Sandbox
+          - AWS
+      dry_run:
+        description: 'Run in dry-run mode (no actual sync)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    name: Sync HubSpot to AWS Partner Central
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Run sync
+        env:
+          AWS_ACE_ACCESS_KEY_ID: ${{ secrets.AWS_ACE_ACCESS_KEY_ID }}
+          AWS_ACE_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACE_SECRET_ACCESS_KEY }}
+          ACE_CATALOG: ${{ github.event.inputs.catalog || 'Sandbox' }}
+          ACE_SOLUTION_ID: ${{ secrets.ACE_SOLUTION_ID }}
+          ACE_REGION: ${{ secrets.ACE_REGION || 'us-east-1' }}
+          ACE_USER_AGENT: ${{ secrets.ACE_USER_AGENT }}
+          HUBSPOT_API_KEY: ${{ secrets.HUBSPOT_API_KEY }}
+          HUBSPOT_PORTAL_ID: ${{ secrets.HUBSPOT_PORTAL_ID }}
+          HUBSPOT_REGION: ${{ secrets.HUBSPOT_REGION || 'na1' }}
+          HUBSPOT_PIPELINE_ID: ${{ secrets.HUBSPOT_PIPELINE_ID || 'default' }}
+          STAGE_MAPPING: ${{ secrets.STAGE_MAPPING }}
+          STAGE_DISPLAY_NAMES: ${{ secrets.STAGE_DISPLAY_NAMES }}
+          SYNC_ELIGIBLE_STAGES: ${{ secrets.SYNC_ELIGIBLE_STAGES }}
+          SKIP_STAGES: ${{ secrets.SKIP_STAGES }}
+          ACE_SLACK_CHANNEL: ${{ secrets.ACE_SLACK_CHANNEL }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          LOG_LEVEL: ${{ secrets.LOG_LEVEL || 'INFO' }}
+          # Optional: custom field name overrides (only set if your HubSpot uses non-default names)
+          # HS_SUBMIT_FIELD: ${{ secrets.HS_SUBMIT_FIELD }}
+          # HS_ACE_OPP_ID_FIELD: ${{ secrets.HS_ACE_OPP_ID_FIELD }}
+          # HS_ACE_STATUS_FIELD: ${{ secrets.HS_ACE_STATUS_FIELD }}
+          # HS_CONTRACT_TERM_FIELD: ${{ secrets.HS_CONTRACT_TERM_FIELD }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python -m src.main sync --catalog "$ACE_CATALOG" --dry-run
+          else
+            python -m src.main sync --catalog "$ACE_CATALOG"
+          fi
+
+      - name: Upload sync logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: sync-logs-${{ github.run_id }}
+          path: data/sync_log.json
+          retention-days: 30
