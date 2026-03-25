@@ -1,6 +1,16 @@
-# CLAUDE.md
+# CLAUDE.md — HubSpot → AWS Pipeline Sync
 
 Guidance for Claude Code and AI assistants working with this project.
+
+## Safety Rule: Dry Run First
+
+**CRITICAL: Never run commands that write to AWS Partner Central (ACE) or HubSpot in production mode unless the user has explicitly reviewed and approved a dry run first.**
+
+- Always use `--dry-run` for the first sync run. Show the user the output and explain what would happen.
+- Only after the user confirms they are happy with the dry-run results should you run without `--dry-run`.
+- Never use `--catalog AWS` (production) without explicit user approval. Default to `--catalog Sandbox`.
+- The `setup-hubspot` and `list-stages` commands are read/write to HubSpot schema only (not deal data) and are safe to run, but still confirm with the user before executing.
+- When in doubt, ask. It is always better to preview than to write.
 
 ## Project Overview
 
@@ -135,14 +145,15 @@ This is the hardest part. Read `src/config.py` to understand how `STAGE_MAPPING`
 - [ ] Build the `STAGE_MAPPING`, `STAGE_DISPLAY_NAMES`, `SYNC_ELIGIBLE_STAGES`, and `SKIP_STAGES` values for them based on what they provide
 - [ ] Update the `.env` file with the completed stage mapping values
 
-### Step 5: Test
-Run these commands in order and explain the output:
+### Step 5: Test (Dry Run Only)
+Run these commands in order and explain the output. **Do NOT run a real sync until the user reviews the dry-run output and explicitly approves.**
 ```bash
 pip install -e ".[dev]"
 python -m src.main test-connection        # Verify AWS credentials work
 python -m src.main validate               # Check which deals are ready
-python -m src.main sync --dry-run         # Preview without writing
+python -m src.main sync --dry-run         # Preview without writing — ALWAYS do this first
 ```
+After showing the dry-run results, ask the user: "Does this look correct? Ready to run for real?" Only proceed with `python -m src.main sync --catalog Sandbox` (or `--catalog AWS` for production) after explicit approval.
 
 ### Step 6: Slack (Optional)
 If the user wants Slack notifications:
